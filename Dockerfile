@@ -1,7 +1,5 @@
-# syntax=docker/dockerfile:experimental
-
-MAINTAINER jeanvincent45@gmail.com
-FROM composer:latest AS builder
+FROM composer:latest
+LABEL maintainer="jeanvincent45@gmail.com"
 
 RUN apk add --no-cache $PHPIZE_DEPS bzip2-dev libcurl curl-dev \ 
     libxml2 libxml2-dev \
@@ -15,10 +13,9 @@ RUN apk add --no-cache $PHPIZE_DEPS bzip2-dev libcurl curl-dev \
 run pecl channel-update pecl.php.net \
     && pecl install apcu \
     && echo "extension=apcu.so" > $PHP_INI_DIR/conf.d/01_apcu.ini
+    
 RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd 
 RUN docker-php-ext-configure zip
-#RUN docker-php-ext-configure mcrypt
-#    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 RUN docker-php-ext-configure gd 
 RUN docker-php-ext-install -j$(nproc) \
   bcmath bz2 gd gettext gmp iconv mbstring sockets xml zip
